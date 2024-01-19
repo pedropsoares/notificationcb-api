@@ -42,7 +42,7 @@ async function sendNotification(order: IOrder) {
   bot.telegram.sendMessage(
     chatId,
     `
-       *Venda Realizada $${order.totalOrderAmount} Dolares*
+       *Venda Realizada: $${order.totalOrderAmount} Dolares*
       
       Detalhes da venda:
       
