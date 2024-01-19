@@ -11,49 +11,29 @@ function productsList(lineItems: IOrder['lineItems']) {
 }
 
 function formatTransactionTime(transactionTime: string) {
-  const parts = transactionTime.match(
-    /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})-(\d{2})(\d{2})/,
-  );
+  const year = parseInt(transactionTime.substr(0, 4));
+  const month = parseInt(transactionTime.substr(4, 2)) - 1;
+  const day = parseInt(transactionTime.substr(6, 2));
+  const hour = parseInt(transactionTime.substr(9, 2));
+  const minutes = parseInt(transactionTime.substr(11, 2));
 
-  if (parts) {
-    const year = parseInt(parts[1]);
-    const month = parseInt(parts[2]) - 1;
-    const day = parseInt(parts[3]);
-    const hour = parseInt(parts[4]);
-    const minute = parseInt(parts[5]);
-    const second = parseInt(parts[6]);
-    const offsetHours = parseInt(parts[7]);
-    const offsetMinutes = parseInt(parts[8]);
+  const data = new Date(year, month, day, hour, minutes);
 
-    const dateString = new Date(
-      Date.UTC(year, month, day, hour, minute, second) -
-        (offsetHours * 60 + offsetMinutes) * 60 * 1000,
-    );
+  data.setHours(data.getHours() + 5);
 
-    const date = new Date(dateString);
+  const dayFormatted = data.getDate();
+  const monthFormatted = data.getMonth() + 1;
+  const yearFormatted = data.getFullYear();
+  const hourFormatted = data.getHours();
+  const minutesFormatted = data.getMinutes();
 
-    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const formattedDate = `${dayFormatted < 10 ? '0' : ''}${dayFormatted}/${
+    monthFormatted < 10 ? '0' : ''
+  }${monthFormatted}/${yearFormatted}, ${
+    hourFormatted < 10 ? '0' : ''
+  }${hourFormatted}:${minutesFormatted < 10 ? '0' : ''}${minutesFormatted}`;
 
-    const options: Intl.DateTimeFormatOptions = {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZone: userTimeZone,
-    };
-
-    const formattedDate = new Intl.DateTimeFormat('pt-BR', options).format(
-      date,
-    );
-
-    console.log(formattedDate);
-    return formattedDate;
-  } else {
-    console.error('Formato de data inválido');
-    return 'Formato de data inválido';
-  }
+  return formattedDate;
 }
 
 async function sendNotification(order: IOrder) {
