@@ -74,12 +74,15 @@ const processNotificationCB = async (req: Request, res: Response) => {
 
     await sendNotification(orderData);
 
-    res.status(200).end();
+    res
+      .status(200)
+      .json({ success: true, message: 'Notificação processada com sucesso.' });
   } catch (error) {
     console.error(error);
-    res
-      .status(401)
-      .send('Não foi possível descriptografar a notificação instantânea');
+    res.status(401).json({
+      success: false,
+      message: 'Não foi possível descriptografar a notificação instantânea.',
+    });
   }
 };
 
